@@ -4,6 +4,14 @@ import { useState, useEffect } from 'react';
 import { useProviders, usePrice } from '@/hooks/useOracleApi';
 import { formatCurrency, getStatusColor, getConfidenceColor } from '@/lib/utils';
 
+interface OracleDisplay {
+  name: string;
+  price: string;
+  change: string;
+  status: string;
+  confidence: number;
+}
+
 export default function OracleMetrics() {
   const [btcPrice, setBtcPrice] = useState<any>(null);
   const [providers, setProviders] = useState<any>(null);
@@ -37,7 +45,7 @@ export default function OracleMetrics() {
   }, [getPrice, getProviders]);
 
   // Fallback data for demonstration
-  const fallbackOracles = [
+  const fallbackOracles: OracleDisplay[] = [
     { name: 'Chainlink', price: '$42,234.56', change: '+2.3%', status: 'active', confidence: 98 },
     { name: 'CoinGecko', price: '$42,198.23', change: '+2.1%', status: 'active', confidence: 96 },
     { name: 'Band Protocol', price: '$42,267.89', change: '+2.4%', status: 'active', confidence: 94 },
@@ -45,8 +53,8 @@ export default function OracleMetrics() {
     { name: 'Tellor', price: '$42,245.67', change: '+2.2%', status: 'warning', confidence: 87 }
   ];
 
-  const displayOracles = providers?.providers ? 
-    providers.providers.slice(0, 5).map((provider: any) => ({
+  const displayOracles: OracleDisplay[] = providers?.providers ? 
+    providers.providers.slice(0, 5).map((provider: any): OracleDisplay => ({
       name: provider.name,
       price: btcPrice ? formatCurrency(btcPrice.price) : '$42,000.00',
       change: btcPrice?.market_data ? `${btcPrice.market_data.change_24h > 0 ? '+' : ''}${btcPrice.market_data.change_24h.toFixed(1)}%` : '+2.1%',

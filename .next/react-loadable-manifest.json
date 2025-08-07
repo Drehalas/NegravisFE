@@ -1,22 +1,33 @@
 {
   "app\\page.tsx -> @/components/LandingPage3D": {
-    "id": "app\\page.tsx -> @/components/LandingPage3D",
+    "id": 3324,
     "files": [
-      "static/chunks/_app-pages-browser_components_LandingPage3D_tsx.js"
+      "static/chunks/b536a0f1.eb70e088bfc9489f.js",
+      "static/chunks/bd904a5c.1bbfcfbeda1a5494.js",
+      "static/chunks/1329d575.00e75f68e4c701af.js",
+      "static/chunks/874-437a265a67d6cfee.js",
+      "static/chunks/13.add7a8ed9480d5b4.js",
+      "static/chunks/324.0f3933ba2f312c34.js"
     ]
   },
   "node_modules\\@react-three\\drei\\core\\VideoTexture.js -> hls.js": {
-    "id": "node_modules\\@react-three\\drei\\core\\VideoTexture.js -> hls.js",
+    "id": null,
     "files": []
   },
   "node_modules\\@react-three\\drei\\web\\FaceLandmarker.js -> @mediapipe/tasks-vision": {
-    "id": "node_modules\\@react-three\\drei\\web\\FaceLandmarker.js -> @mediapipe/tasks-vision",
+    "id": null,
     "files": []
   },
-  "node_modules\\next\\dist\\client\\dev\\hot-reloader\\app\\use-websocket.js -> @vercel/turbopack-ecmascript-runtime/browser/dev/hmr-client/hmr-client.ts": {
-    "id": "node_modules\\next\\dist\\client\\dev\\hot-reloader\\app\\use-websocket.js -> @vercel/turbopack-ecmascript-runtime/browser/dev/hmr-client/hmr-client.ts",
+  "node_modules\\next\\dist\\client\\index.js -> ../pages/_app": {
+    "id": 472,
     "files": [
-      "static/chunks/_app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js"
+      "static/chunks/472.a3826d29d6854395.js"
+    ]
+  },
+  "node_modules\\next\\dist\\client\\index.js -> ../pages/_error": {
+    "id": 9341,
+    "files": [
+      "static/chunks/341.716d46e6e5cb6bdc.js"
     ]
   }
 }
