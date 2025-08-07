@@ -153,7 +153,31 @@ export default function LandingPage3D() {
             </Link>
             
             {/* Navigation Menu */}
-            <ul className="hidden md:flex space-x-8">
+            <ul className="hidden md:flex space-x-6">
+              <li>
+                <Link 
+                  href="/getting-started" 
+                  className="text-white hover:text-blue-400 transition-colors duration-200 font-medium"
+                >
+                  Get Started
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/use-cases" 
+                  className="text-white hover:text-blue-400 transition-colors duration-200 font-medium"
+                >
+                  Use Cases
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/docs" 
+                  className="text-white hover:text-blue-400 transition-colors duration-200 font-medium"
+                >
+                  Docs
+                </Link>
+              </li>
               <li>
                 <Link 
                   href="/dashboard" 
@@ -168,22 +192,6 @@ export default function LandingPage3D() {
                   className="text-white hover:text-blue-400 transition-colors duration-200 font-medium"
                 >
                   Oracles
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/analytics" 
-                  className="text-white hover:text-blue-400 transition-colors duration-200 font-medium"
-                >
-                  Analytics
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/explorer" 
-                  className="text-white hover:text-blue-400 transition-colors duration-200 font-medium"
-                >
-                  Explorer
                 </Link>
               </li>
               <li>
@@ -255,16 +263,16 @@ export default function LandingPage3D() {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
               <Link 
-                href="/oracles" 
+                href="/getting-started" 
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
-                Launch Oracle Assistant
+                Get Started Free
               </Link>
               <Link 
-                href="/dashboard" 
+                href="/oracles" 
                 className="border-2 border-white/30 hover:border-white/60 text-white font-semibold py-4 px-8 rounded-lg hover:bg-white/10 transition-all duration-300 backdrop-blur-sm"
               >
-                View Dashboard
+                Try Oracle Assistant
               </Link>
             </div>
           </div>
