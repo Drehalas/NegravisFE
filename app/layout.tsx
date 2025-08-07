@@ -21,8 +21,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Negravis - Hedera Consensus Oracles",
-  description: "Advanced Hedera Consensus Oracle platform with multiple data sources and real-time analytics",
+  title: "Negravis Web - Advanced Hedera Consensus Oracle Dashboard",
+  description: "Real-time Oracle dashboard with interactive queries, 3D visualization, and comprehensive analytics for Hedera Consensus Service",
 };
 
 export default function RootLayout({

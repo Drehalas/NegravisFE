@@ -1,18 +1,27 @@
 
 'use client';
 
-import Header from '@/components/Header';
-import HeroSection from '@/components/HeroSection';
+import dynamic from 'next/dynamic';
 import ServicesGrid from '@/components/ServicesGrid';
 import SecuritySection from '@/components/SecuritySection';
 import StatsSection from '@/components/StatsSection';
+import Features from '@/components/Features';
+import HCSShowcase from '@/components/hedera/HCSShowcase';
+import HashScanShowcase from '@/components/hedera/HashScanShowcase';
+
+// Dynamically import 3D components to avoid SSR issues
+const LandingPage3D = dynamic(() => import('@/components/LandingPage3D'), {
+  ssr: false,
+});
 
 export default function Home() {
   return (
     <div className="min-h-screen">
-      <Header />
-      <HeroSection />
+      <LandingPage3D />
       <ServicesGrid />
+      <HCSShowcase />
+      <HashScanShowcase />
+      <Features />
       <SecuritySection />
       <StatsSection />
       
@@ -27,7 +36,7 @@ export default function Home() {
                 <h3 className="font-['Pacifico'] text-2xl">Negravis</h3>
               </div>
               <p className="text-gray-400 mb-6 max-w-md">
-                Advanced Hedera Consensus Oracle platform with multiple data sources, 
+                Advanced Hedera Consensus Oracle platform with 3D visualization, 
                 real-time analytics, and enterprise-grade security.
               </p>
               <div className="flex space-x-4">
@@ -65,7 +74,7 @@ export default function Home() {
           </div>
           
           <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Negravis. All rights reserved. Built on Hedera Hashgraph.</p>
+            <p>&copy; 2024 Negravis. All rights reserved. Built on Hedera Hashgraph with 3D visualization.</p>
           </div>
         </div>
       </footer>
