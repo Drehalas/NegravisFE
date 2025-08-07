@@ -188,10 +188,10 @@ export default function LandingPage3D() {
               </li>
               <li>
                 <Link 
-                  href="/consensus" 
+                  href="/api-docs" 
                   className="text-white hover:text-blue-400 transition-colors duration-200 font-medium"
                 >
-                  Consensus
+                  API Docs
                 </Link>
               </li>
             </ul>
