@@ -1,16 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, ChevronDown } from 'lucide-react';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const navigation = [
     { name: 'Home', href: '/' },
     { name: 'Get Started', href: '/getting-started' },
+    { name: 'Use Cases', href: '/use-cases' },
     {
       name: 'Platform',
       dropdown: [
@@ -24,7 +26,6 @@ export default function Header() {
     {
       name: 'Resources',
       dropdown: [
-        { name: 'Use Cases', href: '/use-cases' },
         { name: 'Documentation', href: '/docs' },
         { name: 'API Reference', href: '/api-docs' },
         { name: 'Tutorials', href: '/tutorials' },
@@ -40,10 +41,15 @@ export default function Header() {
         { name: 'IoT & Sensors', href: '/solutions/iot' },
         { name: 'Real-time Analytics', href: '/solutions/analytics' }
       ]
-    },
-    { name: 'Pricing', href: '/pricing' },
-    { name: 'Support', href: '/support' }
+    }
   ];
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeout) clearTimeout(hoverTimeout);
+    };
+  }, [hoverTimeout]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-lg border-b border-purple-500/20">
@@ -67,8 +73,16 @@ export default function Header() {
                 {item.dropdown ? (
                   <div
                     className="relative"
-                    onMouseEnter={() => setActiveDropdown(item.name)}
-                    onMouseLeave={() => setActiveDropdown(null)}
+                    onMouseEnter={() => {
+                      if (hoverTimeout) clearTimeout(hoverTimeout);
+                      const timeout = setTimeout(() => setActiveDropdown(item.name), 200);
+                      setHoverTimeout(timeout);
+                    }}
+                    onMouseLeave={() => {
+                      if (hoverTimeout) clearTimeout(hoverTimeout);
+                      const timeout = setTimeout(() => setActiveDropdown(null), 200);
+                      setHoverTimeout(timeout);
+                    }}
                   >
                     <button className="flex items-center space-x-1 text-white hover:text-purple-300 transition-colors duration-200 font-medium">
                       <span>{item.name}</span>
@@ -169,7 +183,7 @@ export default function Header() {
                 </div>
               ))}
               
-              <div className="pt-4 border-t border-purple-500/20 space-y-2">
+              <div className="pt-4 border-t border-purple-500/20 space-y-3">
                 <Link
                   href="/login"
                   className="block text-white hover:text-purple-300 transition-colors font-medium"
