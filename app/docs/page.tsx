@@ -724,12 +724,19 @@ async function loggedAPICall(operation, symbol) {
               </div>
               
               <div className="prose prose-lg max-w-none">
-                <div 
-                  className="markdown-content"
-                  dangerouslySetInnerHTML={{ 
-                    __html: currentSection?.content.content.replace(/\n/g, '<br/>').replace(/```(\w+)?\n(.*?)```/gs, '<pre><code class="language-$1">$2</code></pre>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/\*([^*]+)\*/g, '<em>$1</em>').replace(/^### (.+)$/gm, '<h3>$1</h3>').replace(/^## (.+)$/gm, '<h2>$1</h2>').replace(/^# (.+)$/gm, '<h1>$1</h1>')
-                  }}
-                />
+                <div className="markdown-content">
+                  <div dangerouslySetInnerHTML={{
+                    __html: currentSection?.content.content
+                      ?.replace(/\n/g, '<br/>')
+                      ?.replace(/```[\s\S]*?```/g, '<pre><code>$&</code></pre>')
+                      ?.replace(/`([^`]+)`/g, '<code>$1</code>')
+                      ?.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                      ?.replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                      ?.replace(/^### (.+)$/gm, '<h3>$1</h3>')
+                      ?.replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                      ?.replace(/^# (.+)$/gm, '<h1>$1</h1>') || ''
+                  }} />
+                </div>
               </div>
             </div>
 

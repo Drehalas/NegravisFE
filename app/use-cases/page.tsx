@@ -115,9 +115,16 @@ export default function UseCasesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 text-white">
+    <div className="min-h-screen bg-black">
+      {/* Header with 3D Elements */}
+      <div className="relative bg-gradient-to-r from-black via-purple-900 to-black text-white overflow-hidden">
+        {/* 3D Background Elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-16 left-20 w-20 h-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg rotate-45 animate-spin-slow"></div>
+          <div className="absolute top-32 right-32 w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full animate-pulse"></div>
+          <div className="absolute bottom-20 left-16 w-24 h-24 bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg rotate-12 animate-bounce"></div>
+          <div className="absolute bottom-32 right-20 w-32 h-32 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full animate-pulse"></div>
+        </div>
         <div className="max-w-7xl mx-auto px-6 py-16">
           <div className="text-center">
             <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-cyan-200 bg-clip-text text-transparent">
@@ -136,7 +143,7 @@ export default function UseCasesPage() {
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid gap-8">
           {useCases.map((useCase, index) => (
-            <div key={useCase.id} className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-300">
+            <div key={useCase.id} className="bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-xl border border-purple-500/20 overflow-hidden hover:shadow-2xl hover:border-purple-400/40 transition-all duration-300">
               <div className="p-8">
                 <div className="flex items-start gap-6">
                   {/* Icon */}
@@ -147,18 +154,18 @@ export default function UseCasesPage() {
                   {/* Content */}
                   <div className="flex-1">
                     <div className="mb-6">
-                      <h2 className="text-2xl font-bold text-gray-900 mb-3">{useCase.title}</h2>
-                      <p className="text-gray-600 text-lg leading-relaxed">{useCase.description}</p>
+                      <h2 className="text-2xl font-bold text-white mb-3">{useCase.title}</h2>
+                      <p className="text-gray-300 text-lg leading-relaxed">{useCase.description}</p>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-8">
                       {/* Benefits */}
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Key Benefits</h3>
+                        <h3 className="text-lg font-semibold text-white mb-4">Key Benefits</h3>
                         <ul className="space-y-2">
                           {useCase.benefits.map((benefit, i) => (
-                            <li key={i} className="flex items-center text-gray-700">
-                              <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mr-3"></div>
+                            <li key={i} className="flex items-center text-gray-300">
+                              <div className="w-2 h-2 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full mr-3"></div>
                               {benefit}
                             </li>
                           ))}
@@ -167,13 +174,13 @@ export default function UseCasesPage() {
 
                       {/* Example */}
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Real-World Example</h3>
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <h4 className="font-medium text-gray-900 mb-2">{useCase.example.scenario}</h4>
-                          <p className="text-gray-600 text-sm mb-3">{useCase.example.description}</p>
+                        <h3 className="text-lg font-semibold text-white mb-4">Real-World Example</h3>
+                        <div className="bg-gray-800/50 rounded-lg p-4 border border-purple-500/20">
+                          <h4 className="font-medium text-white mb-2">{useCase.example.scenario}</h4>
+                          <p className="text-gray-300 text-sm mb-3">{useCase.example.description}</p>
                           <div className="flex flex-wrap gap-2">
                             {useCase.example.metrics.map((metric, i) => (
-                              <span key={i} className="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+                              <span key={i} className="inline-block bg-purple-600/20 text-purple-300 text-xs font-medium px-2 py-1 rounded border border-purple-500/30">
                                 {metric}
                               </span>
                             ))}
@@ -190,22 +197,22 @@ export default function UseCasesPage() {
       </div>
 
       {/* Call to Action */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+      <div className="bg-gradient-to-r from-purple-600 to-black text-white">
         <div className="max-w-4xl mx-auto px-6 py-16 text-center">
           <h2 className="text-3xl font-bold mb-6">Ready to Build Your Solution?</h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-xl text-purple-100 mb-8">
             Join the next generation of applications powered by reliable, decentralized data.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
               href="/api-docs" 
-              className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+              className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-purple-50 transition-colors"
             >
               Explore API Documentation
             </a>
             <a 
               href="/dashboard" 
-              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
+              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors"
             >
               Try Live Dashboard
             </a>
