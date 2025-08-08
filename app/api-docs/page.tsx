@@ -5,70 +5,143 @@ import Header from '@/components/Header';
 import { Code, Copy, Play, Check, Book, Terminal, Zap } from 'lucide-react';
 
 export default function ApiDocs() {
-  const [activeEndpoint, setActiveEndpoint] = useState('query');
+  const [activeEndpoint, setActiveEndpoint] = useState('account');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const endpoints = [
     {
-      id: 'query',
-      method: 'POST',
-      path: '/api/oracle-manager/query',
-      title: 'Oracle Query',
-      description: 'Execute queries across multiple Oracle providers with consensus algorithms',
+      id: 'account',
+      method: 'GET',
+      path: '/api/hedera/account/{accountId}',
+      title: 'Get Account Info',
+      description: 'Retrieve Hedera account information including balance and status',
       parameters: {
-        provider: { type: 'string', required: true, description: 'Oracle provider (chainlink, coingecko, weather, nasa, wikipedia)' },
-        query: { type: 'string', required: true, description: 'Query string or symbol' },
-        userId: { type: 'string', required: false, description: 'User identifier for tracking' }
+        accountId: { type: 'string', required: true, description: 'Hedera account ID (e.g., 0.0.123456)' }
       },
-      example: `curl -X POST "https://negravis-app.vercel.app/api/oracle-manager/query" \\
+      example: `curl -X GET "https://api.negravis.com/api/hedera/account/0.0.123456"`
+    },
+    {
+      id: 'balance',
+      method: 'GET',
+      path: '/api/hedera/account/{accountId}/balance',
+      title: 'Account Balance',
+      description: 'Get current HBAR balance for a Hedera account',
+      parameters: {
+        accountId: { type: 'string', required: true, description: 'Hedera account ID' }
+      },
+      example: `curl -X GET "https://api.negravis.com/api/hedera/account/0.0.123456/balance"`
+    },
+    {
+      id: 'transactions',
+      method: 'GET',
+      path: '/api/hedera/account/{accountId}/transactions',
+      title: 'Transaction History',
+      description: 'Get transaction history for a Hedera account',
+      parameters: {
+        accountId: { type: 'string', required: true, description: 'Hedera account ID' },
+        limit: { type: 'number', required: false, description: 'Number of transactions to return (default: 10)' }
+      },
+      example: `curl -X GET "https://api.negravis.com/api/hedera/account/0.0.123456/transactions?limit=20"`
+    },
+    {
+      id: 'hcs-submit',
+      method: 'POST',
+      path: '/api/hedera/hcs/submit',
+      title: 'Submit to HCS Topic',
+      description: 'Submit data to Hedera Consensus Service topic',
+      parameters: {
+        topicId: { type: 'string', required: true, description: 'HCS topic ID (e.g., 0.0.789012)' },
+        data: { type: 'object', required: true, description: 'Data to submit to the topic' }
+      },
+      example: `curl -X POST "https://api.negravis.com/api/hedera/hcs/submit" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "provider": "chainlink",
-    "query": "BTC",
-    "userId": "user123"
+    "topicId": "0.0.789012",
+    "data": {
+      "symbol": "BTC",
+      "price": 45000,
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
   }'`
     },
     {
-      id: 'price',
+      id: 'hcs-messages',
       method: 'GET',
-      path: '/api/oracles/price/{symbol}',
-      title: 'Cryptocurrency Price',
-      description: 'Get real-time cryptocurrency prices from multiple providers',
+      path: '/api/hedera/hcs/topic/{topicId}/messages',
+      title: 'Get HCS Messages',
+      description: 'Retrieve messages from a Hedera Consensus Service topic',
       parameters: {
-        symbol: { type: 'string', required: true, description: 'Cryptocurrency symbol (BTC, ETH, etc.)' },
-        sources: { type: 'array', required: false, description: 'Specific price sources to use' },
-        method: { type: 'string', required: false, description: 'Consensus method (median, weighted, majority)' }
+        topicId: { type: 'string', required: true, description: 'HCS topic ID' },
+        limit: { type: 'number', required: false, description: 'Number of messages to return (default: 10)' }
       },
-      example: `curl -X GET "https://negravis-app.vercel.app/api/oracles/price/BTC?sources=chainlink,coingecko&method=weighted"`
+      example: `curl -X GET "https://api.negravis.com/api/hedera/hcs/topic/0.0.789012/messages?limit=50"`
     },
     {
-      id: 'weather',
+      id: 'oracle-price',
       method: 'GET',
-      path: '/api/oracles/weather/{location}',
-      title: 'Weather Data',
-      description: 'Get current weather information for any location',
+      path: '/api/oracle/price/{symbol}',
+      title: 'Oracle Price Data',
+      description: 'Get real-time price data from Oracle network on Hedera',
       parameters: {
-        location: { type: 'string', required: true, description: 'City name or coordinates' }
+        symbol: { type: 'string', required: true, description: 'Asset symbol (BTC, ETH, HBAR, etc.)' }
       },
-      example: `curl -X GET "https://negravis-app.vercel.app/api/oracles/weather/New%20York"`
+      example: `curl -X GET "https://api.negravis.com/api/oracle/price/BTC"`
     },
     {
-      id: 'providers',
+      id: 'oracle-providers',
       method: 'GET',
-      path: '/api/oracles/providers',
+      path: '/api/oracle/providers',
       title: 'Oracle Providers',
-      description: 'Get status and metrics for all Oracle providers',
+      description: 'Get list of active Oracle providers on Hedera network',
       parameters: {},
-      example: `curl -X GET "https://negravis-app.vercel.app/api/oracles/providers"`
+      example: `curl -X GET "https://api.negravis.com/api/oracle/providers"`
     },
     {
-      id: 'status',
+      id: 'oracle-submit',
+      method: 'POST',
+      path: '/api/oracle/submit',
+      title: 'Submit Oracle Data',
+      description: 'Submit price data to Oracle network (for authorized providers)',
+      parameters: {
+        symbol: { type: 'string', required: true, description: 'Asset symbol' },
+        price: { type: 'number', required: true, description: 'Current price' },
+        metadata: { type: 'object', required: false, description: 'Additional metadata' }
+      },
+      example: `curl -X POST "https://api.negravis.com/api/oracle/submit" \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -d '{
+    "symbol": "BTC",
+    "price": 45000.50,
+    "metadata": {
+      "source": "exchange_api",
+      "confidence": 0.95
+    }
+  }'`
+    },
+    {
+      id: 'wallet-connect',
+      method: 'POST',
+      path: '/api/hedera/wallet/connect',
+      title: 'Connect Wallet',
+      description: 'Initiate connection to Hedera wallet (HashPack, Blade)',
+      parameters: {
+        walletType: { type: 'string', required: false, description: 'Preferred wallet type (hashpack, blade)' }
+      },
+      example: `curl -X POST "https://api.negravis.com/api/hedera/wallet/connect" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "walletType": "hashpack"
+  }'`
+    },
+    {
+      id: 'network-status',
       method: 'GET',
-      path: '/api/oracles/status',
-      title: 'System Status',
-      description: 'Get overall system health and status information',
+      path: '/api/hedera/network/status',
+      title: 'Network Status',
+      description: 'Get Hedera network status and health information',
       parameters: {},
-      example: `curl -X GET "https://negravis-app.vercel.app/api/oracles/status"`
+      example: `curl -X GET "https://api.negravis.com/api/hedera/network/status"`
     }
   ];
 
@@ -81,21 +154,21 @@ export default function ApiDocs() {
   const activeEndpointData = endpoints.find(ep => ep.id === activeEndpoint);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black">
       <Header />
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">API Documentation</h1>
-          <p className="text-gray-600 mt-2">
-            Comprehensive API reference for Negravis Oracle services with real-time data and blockchain integration
+          <h1 className="text-3xl font-bold text-white">Hedera API Documentation</h1>
+          <p className="text-gray-300 mt-2">
+            Comprehensive API reference for Negravis Oracle platform built on Hedera Hashgraph with HCS integration
           </p>
         </div>
 
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Endpoints</h3>
+            <div className="bg-gray-900/80 backdrop-blur-lg rounded-xl shadow-sm border border-purple-500/20 p-6">
+              <h3 className="font-semibold text-white mb-4">Endpoints</h3>
               <nav className="space-y-2">
                 {endpoints.map((endpoint) => (
                   <button
@@ -103,13 +176,13 @@ export default function ApiDocs() {
                     onClick={() => setActiveEndpoint(endpoint.id)}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                       activeEndpoint === endpoint.id
-                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                        : 'text-gray-600 hover:bg-gray-50'
+                        ? 'bg-purple-600 text-white border border-purple-500'
+                        : 'text-gray-300 hover:bg-purple-700/30 hover:text-white'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <span className={`text-xs px-2 py-1 rounded font-mono ${
-                        endpoint.method === 'GET' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                        endpoint.method === 'GET' ? 'bg-green-600/20 text-green-400' : 'bg-blue-600/20 text-blue-400'
                       }`}>
                         {endpoint.method}
                       </span>
@@ -119,20 +192,20 @@ export default function ApiDocs() {
                 ))}
               </nav>
 
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <h4 className="font-medium text-gray-900 mb-3">Quick Links</h4>
+              <div className="mt-8 pt-6 border-t border-purple-500/20">
+                <h4 className="font-medium text-white mb-3">Quick Links</h4>
                 <div className="space-y-2">
-                  <a href="#authentication" className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600">
+                  <a href="#authentication" className="flex items-center gap-2 text-sm text-gray-300 hover:text-purple-300">
                     <Book className="w-4 h-4" />
-                    Authentication
+                    Hedera Integration
                   </a>
-                  <a href="#rate-limits" className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600">
+                  <a href="#rate-limits" className="flex items-center gap-2 text-sm text-gray-300 hover:text-purple-300">
                     <Zap className="w-4 h-4" />
-                    Rate Limits
+                    HCS Topics
                   </a>
-                  <a href="#webhooks" className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600">
+                  <a href="#webhooks" className="flex items-center gap-2 text-sm text-gray-300 hover:text-purple-300">
                     <Terminal className="w-4 h-4" />
-                    Webhooks
+                    Oracle Network
                   </a>
                 </div>
               </div>
@@ -142,24 +215,24 @@ export default function ApiDocs() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             {activeEndpointData && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+              <div className="bg-gray-900/80 backdrop-blur-lg rounded-xl shadow-sm border border-purple-500/20">
                 {/* Header */}
-                <div className="border-b border-gray-200 p-6">
+                <div className="border-b border-purple-500/20 p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <span className={`px-3 py-1 rounded-md text-sm font-mono ${
-                      activeEndpointData.method === 'GET' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                      activeEndpointData.method === 'GET' ? 'bg-green-600/20 text-green-400' : 'bg-blue-600/20 text-blue-400'
                     }`}>
                       {activeEndpointData.method}
                     </span>
-                    <code className="text-lg font-mono text-gray-800">{activeEndpointData.path}</code>
+                    <code className="text-lg font-mono text-purple-300">{activeEndpointData.path}</code>
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">{activeEndpointData.title}</h2>
-                  <p className="text-gray-600">{activeEndpointData.description}</p>
+                  <h2 className="text-2xl font-bold text-white mb-2">{activeEndpointData.title}</h2>
+                  <p className="text-gray-300">{activeEndpointData.description}</p>
                 </div>
 
                 {/* Parameters */}
-                <div className="p-6 border-b border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Parameters</h3>
+                <div className="p-6 border-b border-purple-500/20">
+                  <h3 className="text-lg font-semibold text-white mb-4">Parameters</h3>
                   {Object.keys(activeEndpointData.parameters).length > 0 ? (
                     <div className="space-y-4">
                       {Object.entries(activeEndpointData.parameters).map(([key, param]) => (
