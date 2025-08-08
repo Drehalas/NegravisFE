@@ -1,10 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MessageSquare, Clock, Shield, Zap } from 'lucide-react';
 
 export default function HCSShowcase() {
   const [activeMessage, setActiveMessage] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const messages = [
     {
@@ -32,6 +37,10 @@ export default function HCSShowcase() {
       status: 'Verified'
     }
   ];
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <section className="py-20 bg-gray-900 text-white">

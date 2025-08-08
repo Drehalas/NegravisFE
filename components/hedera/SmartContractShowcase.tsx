@@ -1,12 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Code2, Play, CheckCircle, AlertCircle, FileCode, Zap } from 'lucide-react';
 
 export default function SmartContractShowcase() {
   const [activeTab, setActiveTab] = useState('deployment');
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionResult, setExecutionResult] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const executeContract = async () => {
     setIsExecuting(true);
@@ -71,6 +76,10 @@ contract PriceFeed {
     { label: 'Success Rate', value: '99.8%', change: '+0.2%' },
     { label: 'Active Oracles', value: '9', change: '0%' }
   ];
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <section className="py-20 bg-gray-900 text-white">

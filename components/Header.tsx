@@ -3,35 +3,17 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, ChevronDown } from 'lucide-react';
+import { navigationData } from '@/data/Data';
+import { NavigationItem } from '@/data/types';
+import { useHederaWallet } from '@/hooks/useHedera';
 
-export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+export default function Header(): JSX.Element {
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
-
-  const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Use Cases', href: '/use-cases' },
-    {
-      name: 'Platform',
-      dropdown: [
-        { name: 'Dashboard', href: '/dashboard' },
-        { name: 'Oracle Assistant', href: '/oracles' },
-        { name: 'Analytics', href: '/analytics' },
-        { name: 'Explorer', href: '/explorer' },
-        { name: 'Consensus', href: '/consensus' }
-      ]
-    },
-    {
-      name: 'Resources',
-      dropdown: [
-        { name: 'Documentation', href: '/docs' },
-        { name: 'API Reference', href: '/api-docs' },
-        { name: 'Tutorials', href: '/tutorials' },
-        { name: 'Best Practices', href: '/best-practices' }
-      ]
-    }
-  ];
+  
+  const { account, connectWallet, isConnecting, error } = useHederaWallet();
+  const navigation: NavigationItem[] = navigationData;
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -106,9 +88,23 @@ export default function Header() {
 
           {/* Action Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
-            <button className="text-white hover:text-purple-300 transition-colors font-medium border border-purple-500/30 hover:border-purple-400 px-4 py-2 rounded-lg">
-              Connect Wallet
-            </button>
+            {account ? (
+              <div className="flex items-center space-x-3">
+                <div className="text-white text-sm">
+                  <div className="font-medium">{account.accountId}</div>
+                  <div className="text-gray-400 text-xs">{account.balance.toFixed(4)} ℏ</div>
+                </div>
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+              </div>
+            ) : (
+              <button 
+                onClick={connectWallet}
+                disabled={isConnecting}
+                className="text-white hover:text-purple-300 transition-colors font-medium border border-purple-500/30 hover:border-purple-400 px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+              </button>
+            )}
             <Link
               href="/getting-started"
               className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -170,12 +166,26 @@ export default function Header() {
               ))}
               
               <div className="pt-4 border-t border-purple-500/20 space-y-3">
-                <button 
-                  className="block w-full text-white hover:text-purple-300 transition-colors font-medium border border-purple-500/30 hover:border-purple-400 px-4 py-2 rounded-lg text-center"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Connect Wallet
-                </button>
+                {account ? (
+                  <div className="flex items-center justify-between text-white">
+                    <div>
+                      <div className="font-medium">{account.accountId}</div>
+                      <div className="text-gray-400 text-sm">{account.balance.toFixed(4)} ℏ</div>
+                    </div>
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => {
+                      connectWallet();
+                      setIsMenuOpen(false);
+                    }}
+                    disabled={isConnecting}
+                    className="block w-full text-white hover:text-purple-300 transition-colors font-medium border border-purple-500/30 hover:border-purple-400 px-4 py-2 rounded-lg text-center disabled:opacity-50"
+                  >
+                    {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+                  </button>
+                )}
                 <Link
                   href="/getting-started"
                   className="block bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg font-medium text-center"

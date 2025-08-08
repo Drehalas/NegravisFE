@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FileText, Shield, Upload, Eye, Download, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
 
 interface Document {
@@ -17,6 +17,11 @@ interface Document {
 
 export default function HFSShowcase() {
   const [activeFeature, setActiveFeature] = useState('storage');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [documents] = useState<Document[]>([
     {
       id: '1',
@@ -100,6 +105,10 @@ export default function HFSShowcase() {
     { label: 'Encrypted Files', value: '100%', change: '0%' },
     { label: 'Compliance Level', value: 'GDPR/HIPAA', change: 'Certified' }
   ];
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <section className="py-20 bg-gray-800 text-white">

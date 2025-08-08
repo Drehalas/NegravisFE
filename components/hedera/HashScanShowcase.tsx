@@ -1,11 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, ExternalLink, Verified, Clock, TrendingUp } from 'lucide-react';
 
 export default function HashScanShowcase() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'account' | 'transaction' | 'topic'>('transaction');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const mockData = {
     transaction: {
@@ -54,6 +59,10 @@ export default function HashScanShowcase() {
       time: '8 mins ago'
     }
   ];
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <section className="py-20 bg-gray-800 text-white">
