@@ -6,14 +6,19 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import { navigationData } from '@/data/Data';
 import { NavigationItem } from '@/data/types';
 import { useHederaWallet } from '@/hooks/useHedera';
+import { useZeroGAccount } from '@/hooks/useZeroGNetwork';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
   
-  const { account, connectWallet, isConnecting, error } = useHederaWallet();
+  const { account: hederaAccount, connectWallet, isConnecting, error } = useHederaWallet();
+  const { account: zeroGAccount, loading: zeroGLoading } = useZeroGAccount();
   const navigation: NavigationItem[] = navigationData;
+  
+  // Use 0G account data if available, fallback to Hedera
+  const account = zeroGAccount || hederaAccount;
 
   // Cleanup timeout on unmount
   useEffect(() => {

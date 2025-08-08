@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import SwaggerUI from '@/components/SwaggerUI';
 import Header from '@/components/Header';
 import { Code, Copy, Play, Check, Book, Terminal, Zap } from 'lucide-react';
 
 export default function ApiDocs() {
   const [activeEndpoint, setActiveEndpoint] = useState('account');
+  const [activeTab, setActiveTab] = useState<'endpoints' | 'swagger'>('endpoints');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const endpoints = [
@@ -158,15 +160,49 @@ export default function ApiDocs() {
       <Header />
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white">Hedera API Documentation</h1>
+          <h1 className="text-3xl font-bold text-white">Negravis API Documentation</h1>
           <p className="text-gray-300 mt-2">
-            Comprehensive API reference for Negravis Oracle platform built on Hedera Hashgraph with HCS integration
+            Interactive API reference for Negravis Oracle Platform with 0G Compute Network integration
           </p>
+          
+          {/* Tab Navigation */}
+          <div className="flex space-x-1 mt-6 bg-gray-900/50 rounded-lg p-1">
+            <button
+              onClick={() => setActiveTab('endpoints')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                activeTab === 'endpoints'
+                  ? 'bg-purple-600 text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-gray-800'
+              }`}
+            >
+              <Book className="h-4 w-4 inline mr-2" />
+              Endpoint Reference
+            </button>
+            <button
+              onClick={() => setActiveTab('swagger')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                activeTab === 'swagger'
+                  ? 'bg-purple-600 text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-gray-800'
+              }`}
+            >
+              <Zap className="h-4 w-4 inline mr-2" />
+              Interactive Swagger UI
+            </button>
+          </div>
         </div>
 
-        <div className="grid lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
+        {/* Content based on active tab */}
+        {activeTab === 'swagger' ? (
+          // Swagger UI Tab
+          <div className="w-full">
+            <SwaggerUI />
+          </div>
+        ) : (
+          // Endpoints Tab
+          <div className="grid lg:grid-cols-4 gap-8">
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
             <div className="bg-gray-900/80 backdrop-blur-lg rounded-xl shadow-sm border border-purple-500/20 p-6">
               <h3 className="font-semibold text-white mb-4">Endpoints</h3>
               <nav className="space-y-2">
@@ -363,6 +399,7 @@ export default function ApiDocs() {
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

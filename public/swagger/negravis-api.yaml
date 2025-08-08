@@ -1,0 +1,659 @@
+openapi: 3.0.3
+info:
+  title: Negravis Oracle Platform API
+  description: |
+    **Negravis Oracle Platform** - Dynamic AI-powered Oracle network built on 0G Compute Network and Hedera Hashgraph.
+    
+    This API provides real-time access to:
+    - **AI Service Providers** - Multiple LLM models (Llama, GPT, Claude, Mistral)
+    - **Account Management** - 0G network account balances and operations  
+    - **Oracle Queries** - Submit queries to decentralized AI providers
+    - **Transaction History** - Real-time query costs and blockchain transactions
+    - **Network Status** - Live provider health and performance metrics
+    
+    ## 🚀 Getting Started
+    
+    1. **Account Setup**: GET `/api/account/info` to check your balance
+    2. **Deposit Funds**: POST `/api/account/deposit` to add 0G tokens
+    3. **List Providers**: GET `/api/services/list` to see available AI models
+    4. **Acknowledge Provider**: POST `/api/services/acknowledge-provider` for first-time setup
+    5. **Submit Query**: POST `/api/services/query` to get AI responses
+    
+    ## 🔗 Backend Integration
+    
+    This API integrates with the [0G Compute Network](https://github.com/oguzhaangumuss/Negravis) backend to provide:
+    - Decentralized AI compute with micropayments
+    - Multi-provider oracle consensus
+    - Real-time performance monitoring
+    - Transparent cost tracking
+    
+  version: 1.0.0
+  contact:
+    name: Negravis Team
+    url: https://github.com/Drehalas/NegravisFE
+    email: hello@negravis.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:4000
+    description: Local Development Server
+  - url: https://negravis-api.railway.app
+    description: Production 0G Network API
+  - url: https://negravis.vercel.app/api
+    description: Frontend API Proxy
+
+tags:
+  - name: Account Management
+    description: 0G network account operations and balance management
+  - name: AI Service Providers
+    description: Discover and manage AI service providers on 0G network
+  - name: Oracle Queries
+    description: Submit queries to decentralized AI providers
+  - name: Transaction History
+    description: Query costs, blockchain transactions, and usage analytics
+  - name: Network Status
+    description: Real-time network health and performance monitoring
+  - name: Dashboard Metrics
+    description: Aggregated platform statistics and KPIs
+
+paths:
+  # ==================== ACCOUNT MANAGEMENT ====================
+  /api/account/info:
+    get:
+      tags:
+        - Account Management
+      summary: Get Account Information
+      description: |
+        Retrieve 0G network account details including balance, address, and nonce.
+        
+        **Use Case**: Display account status in header, validate sufficient funds for queries.
+      responses:
+        '200':
+          description: Account information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountInfo'
+              example:
+                address: "0xf07240Efa67755B5311bc75784a061eDB47165Dd"
+                balance: 0.05
+                nonce: 142
+                network: "0g-testnet"
+        '500':
+          description: Failed to retrieve account information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/account/deposit:
+    post:
+      tags:
+        - Account Management
+      summary: Deposit Funds to Account
+      description: |
+        Add 0G tokens to your account for AI service payments.
+        
+        **Use Case**: Fund account for AI queries, automatic balance top-ups.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: number
+                  format: float
+                  minimum: 0.001
+                  maximum: 10
+                  description: Amount of 0G tokens to deposit
+                  example: 0.1
+      responses:
+        '200':
+          description: Deposit successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  transactionHash:
+                    type: string
+                    example: "0x1a2b3c4d5e6f7890abcdef1234567890abcdef1234567890abcdef1234567890"
+                  newBalance:
+                    type: number
+                    format: float
+                    example: 0.15
+        '400':
+          description: Invalid deposit amount
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ==================== AI SERVICE PROVIDERS ====================
+  /api/services/list:
+    get:
+      tags:
+        - AI Service Providers
+      summary: List Available AI Service Providers
+      description: |
+        Get all available AI service providers on the 0G network.
+        
+        **Models Available**: Llama 3.3, GPT-4, Claude, Mistral, and more.
+        
+        **Use Case**: Populate provider dropdowns, show real-time provider health.
+      responses:
+        '200':
+          description: List of available AI service providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceProvider'
+              example:
+                - address: "0xf07240Efa67755B5311bc75784a061eDB47165Dd"
+                  endpoint: "https://inference-api.0g.ai/v1"
+                  model: "llama-3.3-70b-instruct"
+                  isActive: true
+                  responseTime: 120
+                  reliability: 0.98
+                - address: "0x3feE5a4dd5FDb8a32dDA97Bed899830605dBD9D3"
+                  endpoint: "https://gpt-api.0g.ai/v1"
+                  model: "gpt-4-turbo"
+                  isActive: true
+                  responseTime: 95
+                  reliability: 0.96
+
+  /api/services/acknowledge-provider:
+    post:
+      tags:
+        - AI Service Providers
+      summary: Acknowledge AI Service Provider
+      description: |
+        Acknowledge a provider for first-time use. Required once per provider.
+        
+        **Use Case**: One-time setup before submitting queries to a new provider.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - providerAddress
+              properties:
+                providerAddress:
+                  type: string
+                  pattern: '^0x[a-fA-F0-9]{40}$'
+                  description: Ethereum address of the AI service provider
+                  example: "0xf07240Efa67755B5311bc75784a061eDB47165Dd"
+      responses:
+        '200':
+          description: Provider acknowledged successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Provider acknowledged successfully"
+
+  # ==================== ORACLE QUERIES ====================
+  /api/services/query:
+    post:
+      tags:
+        - Oracle Queries
+      summary: Submit AI Query
+      description: |
+        Submit a query to an AI service provider on the 0G network.
+        
+        **Cost**: Micropayments automatically deducted from account balance.
+        
+        **Use Case**: Get AI responses for chatbots, analysis, code generation, etc.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+            example:
+              providerAddress: "0xf07240Efa67755B5311bc75784a061eDB47165Dd"
+              query: "Explain quantum computing in simple terms"
+              fallbackFee: 0.01
+      responses:
+        '200':
+          description: Query processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+              example:
+                success: true
+                response:
+                  content: "Quantum computing is a revolutionary technology that uses quantum mechanical phenomena..."
+                  metadata:
+                    model: "llama-3.3-70b-instruct"
+                    isValid: true
+                    provider: "0xf07240Efa67755B5311bc75784a061eDB47165Dd"
+                    chatId: "chatcmpl-123456789"
+                    cost: 0.001
+                    timestamp: "2024-01-15T10:30:00Z"
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '402':
+          description: Insufficient balance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                example:
+                  error: "insufficient_balance"
+                  message: "Account balance too low. Please deposit more 0G tokens."
+
+  # ==================== TRANSACTION HISTORY ====================
+  /api/transactions/history:
+    get:
+      tags:
+        - Transaction History
+      summary: Get Transaction History
+      description: |
+        Retrieve recent transaction history including query costs and blockchain operations.
+        
+        **Use Case**: Display transaction history, cost tracking, usage analytics.
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of transactions to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: type
+          in: query
+          description: Filter by transaction type
+          schema:
+            type: string
+            enum: [ai_query, deposit, withdrawal, provider_payment]
+      responses:
+        '200':
+          description: Transaction history retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+
+  # ==================== NETWORK STATUS ====================
+  /api/network/status:
+    get:
+      tags:
+        - Network Status
+      summary: Get Network Status
+      description: |
+        Get real-time 0G network status and performance metrics.
+        
+        **Use Case**: Network health monitoring, system status pages.
+      responses:
+        '200':
+          description: Network status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkStatus'
+
+  # ==================== DASHBOARD METRICS ====================
+  /api/dashboard/metrics:
+    get:
+      tags:
+        - Dashboard Metrics
+      summary: Get Dashboard Metrics
+      description: |
+        Get aggregated platform statistics and KPIs.
+        
+        **Use Case**: Dashboard overview, platform analytics.
+      responses:
+        '200':
+          description: Dashboard metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardMetrics'
+
+components:
+  schemas:
+    AccountInfo:
+      type: object
+      required:
+        - address
+        - balance
+        - nonce
+        - network
+      properties:
+        address:
+          type: string
+          pattern: '^0x[a-fA-F0-9]{40}$'
+          description: Ethereum address of the account
+          example: "0xf07240Efa67755B5311bc75784a061eDB47165Dd"
+        balance:
+          type: number
+          format: float
+          minimum: 0
+          description: Account balance in 0G tokens
+          example: 0.05
+        nonce:
+          type: integer
+          minimum: 0
+          description: Account transaction nonce
+          example: 142
+        network:
+          type: string
+          description: Network identifier
+          example: "0g-testnet"
+
+    ServiceProvider:
+      type: object
+      required:
+        - address
+        - endpoint
+        - model
+        - isActive
+      properties:
+        address:
+          type: string
+          pattern: '^0x[a-fA-F0-9]{40}$'
+          description: Provider's Ethereum address
+          example: "0xf07240Efa67755B5311bc75784a061eDB47165Dd"
+        endpoint:
+          type: string
+          format: uri
+          description: Provider's API endpoint
+          example: "https://inference-api.0g.ai/v1"
+        model:
+          type: string
+          description: AI model name
+          example: "llama-3.3-70b-instruct"
+        isActive:
+          type: boolean
+          description: Whether provider is currently active
+          example: true
+        responseTime:
+          type: integer
+          minimum: 0
+          description: Average response time in milliseconds
+          example: 120
+        reliability:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Provider reliability score (0-1)
+          example: 0.98
+
+    QueryRequest:
+      type: object
+      required:
+        - providerAddress
+        - query
+        - fallbackFee
+      properties:
+        providerAddress:
+          type: string
+          pattern: '^0x[a-fA-F0-9]{40}$'
+          description: Address of the AI service provider
+          example: "0xf07240Efa67755B5311bc75784a061eDB47165Dd"
+        query:
+          type: string
+          minLength: 1
+          maxLength: 4000
+          description: The query to submit to the AI provider
+          example: "Explain quantum computing in simple terms"
+        fallbackFee:
+          type: number
+          format: float
+          minimum: 0.001
+          maximum: 1
+          description: Maximum fee willing to pay for the query
+          example: 0.01
+
+    QueryResponse:
+      type: object
+      required:
+        - success
+        - response
+      properties:
+        success:
+          type: boolean
+          description: Whether the query was processed successfully
+          example: true
+        response:
+          type: object
+          required:
+            - content
+            - metadata
+          properties:
+            content:
+              type: string
+              description: The AI-generated response
+              example: "Quantum computing is a revolutionary technology..."
+            metadata:
+              type: object
+              required:
+                - model
+                - isValid
+                - provider
+                - chatId
+              properties:
+                model:
+                  type: string
+                  description: AI model that processed the query
+                  example: "llama-3.3-70b-instruct"
+                isValid:
+                  type: boolean
+                  description: Whether the response passed validation
+                  example: true
+                provider:
+                  type: string
+                  description: Provider address that processed the query
+                  example: "0xf07240Efa67755B5311bc75784a061eDB47165Dd"
+                chatId:
+                  type: string
+                  description: Unique identifier for this query
+                  example: "chatcmpl-123456789"
+                cost:
+                  type: number
+                  format: float
+                  description: Actual cost of the query
+                  example: 0.001
+                timestamp:
+                  type: string
+                  format: date-time
+                  description: When the query was processed
+                  example: "2024-01-15T10:30:00Z"
+
+    Transaction:
+      type: object
+      required:
+        - id
+        - type
+        - status
+        - timestamp
+        - amount
+      properties:
+        id:
+          type: string
+          description: Unique transaction identifier
+          example: "tx_123456789"
+        type:
+          type: string
+          enum: [ai_query, deposit, withdrawal, provider_payment]
+          description: Type of transaction
+          example: "ai_query"
+        status:
+          type: string
+          enum: [pending, success, failed]
+          description: Transaction status
+          example: "success"
+        timestamp:
+          type: string
+          format: date-time
+          description: When the transaction occurred
+          example: "2024-01-15T10:30:00Z"
+        amount:
+          type: number
+          format: float
+          description: Transaction amount in 0G tokens
+          example: 0.001
+        description:
+          type: string
+          description: Human-readable transaction description
+          example: "AI query to Llama 3.3 model"
+        fromAddress:
+          type: string
+          description: Source address
+          example: "0xf07240Efa67755B5311bc75784a061eDB47165Dd"
+        toAddress:
+          type: string
+          description: Destination address
+          example: "0x3feE5a4dd5FDb8a32dDA97Bed899830605dBD9D3"
+
+    NetworkStatus:
+      type: object
+      required:
+        - status
+        - activeProviders
+        - totalQueries24h
+        - averageResponseTime
+        - networkHealth
+      properties:
+        status:
+          type: string
+          enum: [online, offline, degraded, maintenance]
+          description: Overall network status
+          example: "online"
+        activeProviders:
+          type: integer
+          minimum: 0
+          description: Number of active AI providers
+          example: 12
+        totalQueries24h:
+          type: integer
+          minimum: 0
+          description: Total queries processed in last 24 hours
+          example: 1247
+        averageResponseTime:
+          type: number
+          format: float
+          description: Average response time across all providers (ms)
+          example: 125.5
+        networkHealth:
+          type: string
+          enum: [excellent, good, fair, poor]
+          description: Overall network health assessment
+          example: "excellent"
+        lastUpdated:
+          type: string
+          format: date-time
+          description: When these metrics were last updated
+          example: "2024-01-15T10:30:00Z"
+
+    DashboardMetrics:
+      type: object
+      required:
+        - totalUsers
+        - totalQueries
+        - totalValueTransacted
+        - averageQueryCost
+        - topProviders
+      properties:
+        totalUsers:
+          type: integer
+          minimum: 0
+          description: Total number of platform users
+          example: 1584
+        totalQueries:
+          type: integer
+          minimum: 0
+          description: Total queries processed all-time
+          example: 125847
+        totalValueTransacted:
+          type: number
+          format: float
+          description: Total value transacted in 0G tokens
+          example: 45.67
+        averageQueryCost:
+          type: number
+          format: float
+          description: Average cost per query
+          example: 0.0015
+        topProviders:
+          type: array
+          items:
+            type: object
+            properties:
+              address:
+                type: string
+                example: "0xf07240Efa67755B5311bc75784a061eDB47165Dd"
+              name:
+                type: string
+                example: "Llama 3.3 Provider"
+              queries:
+                type: integer
+                example: 2847
+              reliability:
+                type: number
+                format: float
+                example: 0.98
+
+    Error:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: "insufficient_balance"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Account balance too low. Please deposit more 0G tokens."
+        details:
+          type: object
+          description: Additional error details
+        timestamp:
+          type: string
+          format: date-time
+          description: When the error occurred
+          example: "2024-01-15T10:30:00Z"
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: |
+        Optional authentication for enhanced features.
+        Most endpoints work without authentication for demo purposes.
+
+security:
+  - BearerAuth: []
+  - {} # Allow unauthenticated access

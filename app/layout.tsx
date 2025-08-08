@@ -4,6 +4,7 @@ import { Geist, Geist_Mono, Pacifico } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import DataSourceStatus from "@/components/DataSourceStatus";
 
 const pacifico = Pacifico({
   weight: '400',
@@ -42,6 +43,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <DataSourceStatus />
       </body>
     </html>
   );

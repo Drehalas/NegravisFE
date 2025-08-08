@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useOracleQuery, usePrice, useWeather } from '@/hooks/useOracleApi';
+import { useZeroGQuery, useZeroGProviders } from '@/hooks/useZeroGNetwork';
+import { useNegravisFrontendQuery, useNegravisFrontendProviders, useNegravisFrontendConnection } from '@/hooks/useNegravisFrontend';
 import { formatCurrency, formatTimestamp, getConfidenceColor } from '@/lib/utils';
 
 interface QueryResult {
@@ -23,21 +25,45 @@ interface QueryResult {
 
 export default function OracleAssistant() {
   const [query, setQuery] = useState('');
-  const [selectedProvider, setSelectedProvider] = useState('chainlink');
+  const [selectedProvider, setSelectedProvider] = useState('');
   const [results, setResults] = useState<QueryResult[]>([]);
   const [activeTab, setActiveTab] = useState<'general' | 'price' | 'weather'>('general');
 
+  // Legacy hooks for fallback
   const { queryOracle, loading: queryLoading, error: queryError } = useOracleQuery();
   const { getPrice, loading: priceLoading, error: priceError } = usePrice();
   const { getWeather, loading: weatherLoading, error: weatherError } = useWeather();
-
-  const providers = [
-    { id: 'chainlink', name: 'Chainlink', icon: '🔗' },
-    { id: 'coingecko', name: 'CoinGecko', icon: '🦎' },
-    { id: 'weather', name: 'Weather APIs', icon: '🌤️' },
-    { id: 'nasa', name: 'NASA', icon: '🚀' },
-    { id: 'wikipedia', name: 'Wikipedia', icon: '📚' }
+  
+  // 0G Network hooks for dynamic backend
+  const { providers, loading: providersLoading } = useZeroGProviders();
+  const { submitQuery, loading: zeroGLoading, error: zeroGError } = useZeroGQuery();
+  
+  // Negravis Frontend hooks (priority data source)
+  const { isConnected } = useNegravisFrontendConnection();
+  const { providers: negravisProviders, loading: negravisProvidersLoading } = useNegravisFrontendProviders();
+  const { submitQuery: submitNegravisQuery, loading: negravisLoading, error: negravisError, queryHistory } = useNegravisFrontendQuery();
+  
+  const staticProviders = [
+    { id: 'chainlink', name: 'Chainlink', icon: '🔗', accountId: 'chainlink' },
+    { id: 'coingecko', name: 'CoinGecko', icon: '🦎', accountId: 'coingecko' },
+    { id: 'weather', name: 'Weather APIs', icon: '🌤️', accountId: 'weather' },
+    { id: 'nasa', name: 'NASA', icon: '🚀', accountId: 'nasa' },
+    { id: 'wikipedia', name: 'Wikipedia', icon: '📚', accountId: 'wikipedia' }
   ];
+
+  // Use Negravis providers if connected, otherwise use 0G providers, fallback to static
+  const allProviders = isConnected && negravisProviders.length > 0 
+    ? negravisProviders 
+    : providers.length > 0 
+    ? providers 
+    : staticProviders;
+
+  // Set default provider when providers load
+  useEffect(() => {
+    if (allProviders.length > 0 && !selectedProvider) {
+      setSelectedProvider(allProviders[0].accountId || allProviders[0].id);
+    }
+  }, [allProviders, selectedProvider]);
 
   const handleQuery = async () => {
     if (!query.trim()) return;
@@ -212,9 +238,9 @@ export default function OracleAssistant() {
                   onChange={(e) => setSelectedProvider(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  {providers.map((provider) => (
-                    <option key={provider.id} value={provider.id}>
-                      {provider.icon} {provider.name}
+                  {allProviders.map((provider) => (
+                    <option key={provider.id} value={provider.accountId || provider.id}>
+                      {(provider as any).icon || '🔗'} {provider.name}
                     </option>
                   ))}
                 </select>

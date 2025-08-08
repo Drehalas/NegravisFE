@@ -325,12 +325,28 @@ export const mockNetworkStatus: NetworkStatus = {
 export class DataService {
   private static instance: DataService;
   private cache: Map<string, { data: any; timestamp: number; ttl: number }> = new Map();
+  private useBackend: boolean = true; // Toggle for backend vs mock data
+  private dataSource: 'negravis-frontend' | 'zerog-backend' | 'mock' = 'negravis-frontend';
   
   static getInstance(): DataService {
     if (!DataService.instance) {
       DataService.instance = new DataService();
     }
     return DataService.instance;
+  }
+
+  setBackendMode(enabled: boolean): void {
+    this.useBackend = enabled;
+    this.cache.clear(); // Clear cache when switching modes
+  }
+
+  setDataSource(source: 'negravis-frontend' | 'zerog-backend' | 'mock'): void {
+    this.dataSource = source;
+    this.cache.clear(); // Clear cache when switching data sources
+  }
+
+  getDataSource(): string {
+    return this.dataSource;
   }
 
   private async fetchWithCache<T>(
@@ -362,8 +378,36 @@ export class DataService {
     return this.fetchWithCache(
       'oracle-providers',
       async () => {
-        // In production, this would call the actual API
-        // For now, simulate network delay and return mock data
+        if (this.useBackend && this.dataSource !== 'mock') {
+          // Priority 1: Try Negravis Frontend
+          if (this.dataSource === 'negravis-frontend') {
+            try {
+              const { negravisFrontendApiService } = await import('@/services/negravisFrontendApi');
+              const providers = await negravisFrontendApiService.getOracleProviders();
+              console.log('✅ Using Negravis Frontend providers:', providers.length);
+              return providers;
+            } catch (error) {
+              console.warn('Negravis Frontend unavailable, trying 0G backend:', error);
+              // Fall through to 0G backend
+            }
+          }
+          
+          // Priority 2: Try 0G Backend
+          if (this.dataSource === 'zerog-backend' || this.dataSource === 'negravis-frontend') {
+            try {
+              const { zeroGApiService } = await import('@/services/zeroGApi');
+              const providers = await zeroGApiService.getServiceProviders();
+              console.log('✅ Using 0G Backend providers:', providers.length);
+              return providers;
+            } catch (error) {
+              console.warn('0G Backend unavailable, falling back to mock data:', error);
+              // Fall through to mock data
+            }
+          }
+        }
+        
+        // Priority 3: Mock data fallback
+        console.log('📊 Using mock providers fallback');
         await new Promise(resolve => setTimeout(resolve, 500));
         return mockOracleProviders.map(provider => ({
           ...provider,
@@ -402,6 +446,36 @@ export class DataService {
     return this.fetchWithCache(
       'dashboard-metrics',
       async () => {
+        if (this.useBackend && this.dataSource !== 'mock') {
+          // Priority 1: Try Negravis Frontend
+          if (this.dataSource === 'negravis-frontend') {
+            try {
+              const { negravisFrontendApiService } = await import('@/services/negravisFrontendApi');
+              const metrics = await negravisFrontendApiService.getDashboardMetrics();
+              console.log('✅ Using Negravis Frontend metrics');
+              return metrics;
+            } catch (error) {
+              console.warn('Negravis Frontend metrics unavailable, trying 0G backend:', error);
+              // Fall through to 0G backend
+            }
+          }
+          
+          // Priority 2: Try 0G Backend
+          if (this.dataSource === 'zerog-backend' || this.dataSource === 'negravis-frontend') {
+            try {
+              const { zeroGApiService } = await import('@/services/zeroGApi');
+              const metrics = await zeroGApiService.getDashboardMetrics();
+              console.log('✅ Using 0G Backend metrics');
+              return metrics;
+            } catch (error) {
+              console.warn('0G Backend metrics unavailable, falling back to mock data:', error);
+              // Fall through to mock data
+            }
+          }
+        }
+        
+        // Priority 3: Mock data fallback
+        console.log('📊 Using mock metrics fallback');
         await new Promise(resolve => setTimeout(resolve, 300));
         return {
           ...mockDashboardMetrics,
