@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, ExternalLink, Verified, Clock, TrendingUp } from 'lucide-react';
 
 export default function HashScanShowcase() {
@@ -12,7 +12,45 @@ export default function HashScanShowcase() {
     setMounted(true);
   }, []);
 
-  const mockData = {
+  interface TransactionData {
+    id: string;
+    type: string;
+    status: string;
+    timestamp: string;
+    fee: string;
+    explorer_url: string;
+  }
+
+  interface AccountData {
+    id: string;
+    balance: string;
+    transactions: number;
+    created: string;
+  }
+
+  interface TopicData {
+    id: string;
+    name: string;
+    messages: number;
+    submit_key: string;
+    admin_key: string;
+  }
+
+  interface MockData {
+    transaction: TransactionData;
+    account: AccountData;
+    topic: TopicData;
+  }
+
+  interface RecentTransaction {
+    id: string;
+    type: string;
+    amount: string;
+    status: string;
+    time: string;
+  }
+
+  const mockData: MockData = {
     transaction: {
       id: '0.0.12345@1704067200.123456789',
       type: 'Oracle Query',
@@ -36,7 +74,7 @@ export default function HashScanShowcase() {
     }
   };
 
-  const recentTransactions = [
+  const recentTransactions: RecentTransaction[] = [
     {
       id: '0.0.12345@1704067200.123456789',
       type: 'Oracle Query',

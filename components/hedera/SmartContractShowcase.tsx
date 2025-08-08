@@ -1,7 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Code2, Play, CheckCircle, AlertCircle, FileCode, Zap } from 'lucide-react';
+
+interface DeploymentStep {
+  step: number;
+  title: string;
+  status: 'completed' | 'pending' | 'running';
+  time: string;
+}
 
 export default function SmartContractShowcase() {
   const [activeTab, setActiveTab] = useState('deployment');
@@ -13,7 +20,7 @@ export default function SmartContractShowcase() {
     setMounted(true);
   }, []);
 
-  const executeContract = async () => {
+  const executeContract = async (): Promise<void> => {
     setIsExecuting(true);
     setExecutionResult(null);
     
@@ -63,7 +70,7 @@ contract PriceFeed {
     }
 }`;
 
-  const deploymentSteps = [
+  const deploymentSteps: DeploymentStep[] = [
     { step: 1, title: 'Compile Contract', status: 'completed', time: '2.3s' },
     { step: 2, title: 'Deploy to Hedera', status: 'completed', time: '5.1s' },
     { step: 3, title: 'Verify Contract', status: 'completed', time: '1.8s' },

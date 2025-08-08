@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { navigationData } from '@/data/Data';
 import { NavigationItem } from '@/data/types';
 import { useHederaWallet } from '@/hooks/useHedera';
 
-export default function Header(): JSX.Element {
+export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);

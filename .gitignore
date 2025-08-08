@@ -10,6 +10,13 @@ node_modules/
 /.next/
 /out/
 
+# Static exports and HTML files (not allowed in this project)
+*.html
+!public/*.html
+dist/
+build/
+static/
+
 # Production
 /build
 

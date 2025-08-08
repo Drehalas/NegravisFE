@@ -31,7 +31,7 @@ function useAsyncData<T>(
   
   const { refreshInterval, retryCount = 3, retryDelay = 1000 } = options;
   const retryCountRef = useRef(0);
-  const intervalRef = useRef<NodeJS.Timeout>();
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchData = useCallback(async (isRetry = false) => {
     try {
@@ -77,6 +77,7 @@ function useAsyncData<T>(
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
     };
   }, dependencies);
@@ -307,7 +308,7 @@ export function useSearch<T>(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (timeoutRef.current) {
@@ -336,6 +337,7 @@ export function useSearch<T>(
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
     };
   }, [query, searchFn, debounceMs]);
@@ -355,7 +357,7 @@ export function useSearch<T>(
 
 // Cache Management Hook
 export function useCacheManager() {
-  const [stats, setStats] = useState({ size: 0, keys: [] });
+  const [stats, setStats] = useState<{ size: number; keys: string[] }>({ size: 0, keys: [] });
 
   const updateStats = useCallback(() => {
     setStats(dataService.getCacheStats());

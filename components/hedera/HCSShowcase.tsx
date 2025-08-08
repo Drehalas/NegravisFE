@@ -1,7 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageSquare, Clock, Shield, Zap } from 'lucide-react';
+
+interface HCSMessage {
+  id: string;
+  type: string;
+  content: string;
+  timestamp: string;
+  consensus: string;
+  status: string;
+}
 
 export default function HCSShowcase() {
   const [activeMessage, setActiveMessage] = useState(0);
@@ -11,7 +20,7 @@ export default function HCSShowcase() {
     setMounted(true);
   }, []);
 
-  const messages = [
+  const messages: HCSMessage[] = [
     {
       id: '0.0.12345@1704067200.123456789',
       type: 'Oracle Query',

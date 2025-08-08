@@ -1,10 +1,21 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import { Github, Twitter, Mail, ExternalLink, MessageCircle } from 'lucide-react';
 
+interface FooterLink {
+  name: string;
+  href: string;
+}
+
+interface FooterSection {
+  title: string;
+  links: FooterLink[];
+}
+
 export default function Footer() {
-  const footerSections = [
+  const footerSections: FooterSection[] = [
     {
       title: 'Platform',
       links: [
