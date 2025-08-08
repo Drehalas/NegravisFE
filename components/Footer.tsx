@@ -25,16 +25,7 @@ export default function Footer() {
         { name: 'Status Page', href: '/status' }
       ]
     },
-    {
-      title: 'Solutions',
-      links: [
-        { name: 'DeFi & Trading', href: '/solutions/defi' },
-        { name: 'Smart Contracts', href: '/solutions/smart-contracts' },
-        { name: 'Enterprise', href: '/solutions/enterprise' },
-        { name: 'IoT & Sensors', href: '/solutions/iot' },
-        { name: 'Real-time Analytics', href: '/solutions/analytics' }
-      ]
-    },
+
     {
       title: 'Resources',
       links: [
@@ -44,17 +35,8 @@ export default function Footer() {
         { name: 'Tutorials', href: '/tutorials' },
         { name: 'Blog', href: '/blog' }
       ]
-    },
-    {
-      title: 'Company',
-      links: [
-        { name: 'About Us', href: '/about' },
-        { name: 'Careers', href: '/careers' },
-        { name: 'Partners', href: '/partners' },
-        { name: 'Contact', href: '/contact' },
-        { name: 'Privacy Policy', href: '/privacy' }
-      ]
     }
+
   ];
 
   const socialLinks = [

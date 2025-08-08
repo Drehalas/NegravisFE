@@ -41,31 +41,31 @@ export default function ServicesGrid() {
   ];
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-black">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold text-white mb-4">
             Comprehensive Oracle Infrastructure
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Built with 11 full services and production-grade architecture for scalable, secure, real-time operations
           </p>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => (
-            <div key={index} className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
+            <div key={index} className="bg-gray-900/80 backdrop-blur-lg rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow border border-purple-500/20">
               <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mb-6">
                 <i className={`${service.icon} text-white text-2xl`}></i>
               </div>
               
-              <h3 className="text-xl font-bold text-gray-900 mb-3">{service.title}</h3>
-              <p className="text-gray-600 mb-6 leading-relaxed">{service.description}</p>
+              <h3 className="text-xl font-bold text-white mb-3">{service.title}</h3>
+              <p className="text-gray-300 mb-6 leading-relaxed">{service.description}</p>
               
               <ul className="space-y-2">
                 {service.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-center text-sm text-gray-700">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
+                  <li key={featureIndex} className="flex items-center text-sm text-gray-300">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
                     {feature}
                   </li>
                 ))}

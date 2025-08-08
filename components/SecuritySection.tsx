@@ -42,26 +42,26 @@ export default function SecuritySection() {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-black">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           <div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl font-bold text-white mb-6">
               Enterprise-Grade Security
             </h2>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-gray-300 mb-8">
               Built with multiple layers of security and compliance features for production environments
             </p>
             
             <div className="grid gap-6">
               {securityFeatures.map((feature, index) => (
                 <div key={index} className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
-                    <i className={`${feature.icon} text-blue-600 text-lg`}></i>
+                  <div className="w-10 h-10 bg-purple-600/20 rounded-lg flex items-center justify-center shrink-0">
+                    <i className={`${feature.icon} text-purple-400 text-lg`}></i>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">{feature.title}</h3>
-                    <p className="text-gray-600 text-sm">{feature.description}</p>
+                    <h3 className="font-semibold text-white mb-1">{feature.title}</h3>
+                    <p className="text-gray-300 text-sm">{feature.description}</p>
                   </div>
                 </div>
               ))}

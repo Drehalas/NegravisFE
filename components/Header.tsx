@@ -11,7 +11,6 @@ export default function Header() {
 
   const navigation = [
     { name: 'Home', href: '/' },
-    { name: 'Get Started', href: '/getting-started' },
     { name: 'Use Cases', href: '/use-cases' },
     {
       name: 'Platform',
@@ -30,16 +29,6 @@ export default function Header() {
         { name: 'API Reference', href: '/api-docs' },
         { name: 'Tutorials', href: '/tutorials' },
         { name: 'Best Practices', href: '/best-practices' }
-      ]
-    },
-    {
-      name: 'Solutions',
-      dropdown: [
-        { name: 'DeFi & Trading', href: '/solutions/defi' },
-        { name: 'Smart Contracts', href: '/solutions/smart-contracts' },
-        { name: 'Enterprise', href: '/solutions/enterprise' },
-        { name: 'IoT & Sensors', href: '/solutions/iot' },
-        { name: 'Real-time Analytics', href: '/solutions/analytics' }
       ]
     }
   ];
@@ -117,12 +106,9 @@ export default function Header() {
 
           {/* Action Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
-            <Link
-              href="/login"
-              className="text-white hover:text-purple-300 transition-colors font-medium"
-            >
-              Sign In
-            </Link>
+            <button className="text-white hover:text-purple-300 transition-colors font-medium border border-purple-500/30 hover:border-purple-400 px-4 py-2 rounded-lg">
+              Connect Wallet
+            </button>
             <Link
               href="/getting-started"
               className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -184,13 +170,12 @@ export default function Header() {
               ))}
               
               <div className="pt-4 border-t border-purple-500/20 space-y-3">
-                <Link
-                  href="/login"
-                  className="block text-white hover:text-purple-300 transition-colors font-medium"
+                <button 
+                  className="block w-full text-white hover:text-purple-300 transition-colors font-medium border border-purple-500/30 hover:border-purple-400 px-4 py-2 rounded-lg text-center"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Sign In
-                </Link>
+                  Connect Wallet
+                </button>
                 <Link
                   href="/getting-started"
                   className="block bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg font-medium text-center"
